@@ -1,0 +1,13 @@
+function [i,j] = ltlg2ij(lt0,lg0,allmap_lt,allmap_lg)
+
+% close latitude
+A = abs(allmap_lt - lt0);
+[~,minid] = min(A(:));
+[i,~] = ind2sub(size(A),minid);
+
+% close longitude
+A = abs(allmap_lg - lg0);
+[~,minid] = min(A(:));
+[~,j] = ind2sub(size(A),minid);
+
+end
