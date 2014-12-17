@@ -1,0 +1,9 @@
+figure
+u = uicontrol('Style','slider','Position',[280    56   863   649],...
+    'Min',1,'Max',16,'Value',1);
+for k = 1:16
+    plot(fft(eye(k+16)))
+    axis([-1 1 -1 1])
+    u.Value = k;
+    M(k) = getframe(gcf);
+end
