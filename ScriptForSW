@@ -1,0 +1,120 @@
+clear all;
+% load SW_GPP_2012_M12
+load southwest_cut2.mat
+% load SW_LAT
+% load SW_LONG
+list1 = ls('*.mat');
+
+% addpath('F:\41207');
+
+% x = SW_LONG(1,:);
+% y = (SW_LAT(:,1));
+
+x = SW_log(1,:);
+y = (SW_lat(:,1));
+
+
+for k = 1:size(list1,1)
+load([list1(k,:)]);  
+nm = list1(k,:);
+if ~strcmp(nm(1:6),'SW_GPP') || k>24
+% if ~strcmp(nm(1:6),'SW_GPP')
+    continue;
+end
+
+indtmp = find(nm=='.');
+nm = nm(1:indtmp-1);
+
+cmd = sprintf('%s(%s>=20000) = NaN;',nm,nm);
+eval(cmd);
+
+cmd = sprintf('imagesc(x,y,%s);',nm);
+eval(cmd);
+set(gca,'YDir','normal');
+caxis([0 2000]);
+axis('image')
+
+% Jornada
+lt0   = 32.591;
+lg0   = -106.845;
+%[i,j] = ltlg2ij(lt0,lg0,SW_LAT,SW_LONG);
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  Jornada', 'color','white');
+
+% Sevilleta desert Shrublands
+lt0 = 34.335;
+lg0 = -106.744;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'US-Sv-Shrub-Grass', 'color','white');
+
+% Sevilleta desert grasslands 
+lt0 = 34.362;
+lg0 = -106.702;
+hold on;
+plot(lg0,lt0,'dw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'   ', 'color','white');
+
+% Santa Rita savanna
+lt0 = 31.908;
+lg0 = -110.84;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  US-SR-Savanna', 'color','white');
+
+% Flagstaff-Wildfire  grasslands
+lt0 = 35.4454;
+lg0 = -111.7718;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  US-FWf', 'color','white');
+
+% La Paz 	MX-Lpa 		
+lt0 = 24.1293;
+lg0 = -110.438;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  MX-Lpa', 'color','white');
+
+% Sierra de los locos 	
+lt0 = 29.96;
+lg0 = -110.46;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  MX-Loca', 'color','white');
+
+% Sky Oaks 	
+lt0 = 33.3844;
+lg0 = -116.6403;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  US-SO4ca', 'color','white');
+
+%Tesopaco 	27.84	-109.3
+lt0 = 27.84;
+lg0 = -109.3;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  Tesopaco', 'color','white');
+
+%El Mogor 	32.03	-116.604
+lt0 = 32.03;
+lg0 = -116.604;
+hold on;
+plot(lg0,lt0,'sw','markersize',5,'MarkerFaceColor','auto');
+text(lg0,lt0,'  El Mogor', 'color','white');
+name = ['Sites ' nm];
+Z=colorbar; %caxis('auto')
+caxis([0 2000])
+set(get(Z,'ylabel'),'string','KgCm^2month^-^1]','Fontsize',14, 'fontweight','b','color','k','FontName', 'Times New Roman') 
+set (gcf, 'position', [280    56   863   649])
+% set (gcf, 'position', [280    56   725   642])
+xlabel ('Longitude','FontSize',16,'fontWeight','bold','FontName', 'Times New Roman')
+ylabel ('Latitude','FontSize',16,'fontWeight','bold','FontName', 'Times New Roman')
+set(gca,'FontSize',16,'fontWeight','bold','FontName', 'Times New Roman')
+title(name,'FontSize',16,'fontWeight','bold','FontName', 'Times New Roman', 'interpreter','none')
+
+saveas (gcf, [nm '.png'], 'png')
+saveas (gcf, [nm '.fig'], 'fig')
+end
