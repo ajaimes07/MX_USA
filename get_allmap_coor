@@ -1,0 +1,26 @@
+function [allmap_lt,allmap_lg] = get_allmap_coor(map)
+
+
+[M,N] = size(map);
+
+Y0 = M/2;
+X0 = N/2;
+
+% form readme, this is the space resolution for this dataset
+dx = .05;
+dy = .05;
+
+% allocating memory for latitude and longitude
+allmap_lt = zeros(M,N);
+allmap_lg = zeros(M,N);
+
+for i = 1:M
+    for j = 1:N
+        
+        allmap_lt(i,j) = -(i - Y0)*dy;
+        allmap_lg(i,j) = (j - X0)*dx;
+                
+    end
+end
+
+end
