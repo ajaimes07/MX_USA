@@ -1,0 +1,26 @@
+%Script to cut the southwest area of the modis gpp maps
+
+clear all;
+clc;
+
+list0 = ls('../DATA/*.tif');
+load southwest_cut2
+
+for k = 1:size(list0,1)
+    
+    fprintf('%i out of %i\n',k,size(list0,1));
+    
+    mapk = double(imread(['..\DATA\' list0(k,:)]));   
+    map_cutk = mapk(y1:y2,x1:x2);
+    
+    name = ['SW_' list0(k,9:20)];
+    name(name=='.')='_';
+    
+    cmd = sprintf('%s = map_cutk;',name);
+    eval(cmd);
+    
+    cmd = sprintf('save %s %s', name, name);
+    eval(cmd);
+       
+    
+end
