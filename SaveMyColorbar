@@ -1,0 +1,2 @@
+mycmap = get(1,'Colormap'); 
+save('MyColormaps3','mycmap')
