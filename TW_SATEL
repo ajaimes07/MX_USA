@@ -1,0 +1,107 @@
+%Script to correlate satellite with tower
+
+clear all;
+clc;
+
+load southwest_cut2.mat % to load SW_log and SW_lat
+list1 = ls('*.mat');    % loads gpp from 2010 to 2012 in order
+
+
+x = SW_log(1,:);
+y = (SW_lat(:,1));
+
+
+% gpps. each column is one year. each row is one month
+% TOWER_GPP = zeros(12,3); 
+SATEL_GPP = zeros(12,3); 
+
+
+
+
+% jornada coordinates
+lt0 = 32.591;
+lg0 = -106.845; 
+
+k = 0;
+for i = 1:3 % for in years
+    for j = 1:12  % for in months (recall length(list1)=36)
+        k = k+1;
+        
+        load(list1(k,:));
+
+        nm     = list1(k,:);    
+        indtmp = find(nm=='.');
+        nm     = nm(1:indtmp-1);
+
+        % data_tmp is matrix with satellyte gpp
+        cmd = sprintf('data_tmp = %s;',nm);
+        eval(cmd);
+
+        % find gpp at tower (jornada) for month j and year i
+        [i0,j0]        = ltlg2ij(lt0,lg0,SW_lat,SW_log);
+        gpp_tmp        = data_tmp(i0,j0);
+        SATEL_GPP(j,i) = gpp_tmp;
+
+    end
+end
+% Jornada monthly SUMS GPP in gC/m^2
+load ('C:\Users\Aline.nemo\Documents\MX-USA\Data\MODIS_GPP\141217\Jornada\GPP_TOWER.mat')
+
+% Jornada monthly GPP to KgC/m^2 
+GPP_TOWER_Kg=(GPP_TOWER./12); % from sums to mean
+GPP_TOWER_2010=GPP_TOWER_Kg(:,1); GPP_TOWER_2011=GPP_TOWER_Kg(:,2); GPP_TOWER_2012=GPP_TOWER_Kg(:,3);
+SATEL_GPP_2010=SATEL_GPP(:,1); SATEL_GPP_2011=SATEL_GPP(:,2); SATEL_GPP_2012=SATEL_GPP(:,3);
+
+
+
+% plot (GPP_TOWER_Kg); hold on 
+% % plot (GPP_TOWER); hold on
+% plot (SATEL_GPP); hold on
+figure
+subplot(2,3,1); plot(GPP_TOWER_2010,SATEL_GPP_2010, 'x','MarkerSize',10);hold on;
+[a1,b1]= robustfit(GPP_TOWER_2010,SATEL_GPP_2010);
+hold on
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(GPP_TOWER_2010,SATEL_GPP_2010,1);
+plot(GPP_TOWER_2010,a1(1)+a1(2).*GPP_TOWER_2010,'r','LineWidth',3);
+grid on
+title('JER','FontName','Times New Roman','fontsize',20,'fontweight','b','color','k')
+ylabel('MODIS GPP (Kg/m^2)','FontName','Times New Roman', 'fontsize',18,'fontweight','b','color','k');
+xlabel('TOWER GPP(Kg/m^2)','FontName','Times New Roman', 'fontsize',18,'fontweight','b','color','k');
+text(50,100,['R^2 = ' num2str(r2) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,90,['p-value = ' num2str(pvalue) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,80,['Slope = ' num2str(p(1)) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,70,['Intercept = ' num2str(p(2)) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,60,['RMSE = ' num2str(rmse) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');legend 2010
+
+
+subplot(2,3,2); plot(GPP_TOWER_2011,SATEL_GPP_2011, 'x','MarkerSize',10);hold on;
+[a1,b1]= robustfit(GPP_TOWER_2011,SATEL_GPP_2011);
+hold on
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(GPP_TOWER_2011,SATEL_GPP_2011,1);
+plot(GPP_TOWER_2011,a1(1)+a1(2).*GPP_TOWER_2011,'r','LineWidth',3);
+grid on
+title('JER','FontName','Times New Roman','fontsize',20,'fontweight','b','color','k')
+ylabel('MODIS GPP (Kg/m^2)','FontName','Times New Roman', 'fontsize',18,'fontweight','b','color','k');
+xlabel('TOWER GPP(Kg/m^2)','FontName','Times New Roman', 'fontsize',18,'fontweight','b','color','k');
+text(50,100,['R^2 = ' num2str(r2) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,90,['p-value = ' num2str(pvalue) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,80,['Slope = ' num2str(p(1)) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,70,['Intercept = ' num2str(p(2)) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,60,['RMSE = ' num2str(rmse) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');legend 2011
+
+subplot(2,3,3); plot(GPP_TOWER_2012,SATEL_GPP_2012, 'x','MarkerSize',10);hold on;
+[a1,b1]= robustfit(GPP_TOWER_2012,SATEL_GPP_2012);
+hold on
+[r2,yfit,p,rmse,pvalue] = rsquared_v1(GPP_TOWER_2012,SATEL_GPP_2012,1);
+plot(GPP_TOWER_2012,a1(1)+a1(2).*GPP_TOWER_2012,'r','LineWidth',3);
+grid on
+title('JER','FontName','Times New Roman','fontsize',20,'fontweight','b','color','k')
+ylabel('MODIS GPP (Kg/m^2)','FontName','Times New Roman', 'fontsize',18,'fontweight','b','color','k');
+xlabel('TOWER GPP(Kg/m^2)','FontName','Times New Roman', 'fontsize',18,'fontweight','b','color','k');
+text(50,100,['R^2 = ' num2str(r2) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,90,['p-value = ' num2str(pvalue) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,80,['Slope = ' num2str(p(1)) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,70,['Intercept = ' num2str(p(2)) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+text(50,60,['RMSE = ' num2str(rmse) '$'],'interpreter','tex','fontsize',16,'fontweight','b','FontName','Times New Roman');
+legend 2012
+
